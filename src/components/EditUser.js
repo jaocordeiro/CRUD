@@ -1,49 +1,47 @@
-import React, { useState, useContext, useEffect } from "react";
-
-import { GlobalContext } from './context/GlobalState';
-
+import React, { useState, useContext, useEffect } from 'react';
+import { GlobalContext } from "../context/GlobalState";
 import { Link, useHistory } from "react-router-dom";
-import { v4 as uuid } from 'uuid'
-
-import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import {
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Button
+} from "reactstrap";
 
 export const EditUser = (props) => {
-    const [ selectedUser, setSelectedUser ]=useState({
-      id: '',
-      name: ''
-    });
-    const { users, editUser }=useContext(GlobalContext);
-    const history = useHistory();
-    const currentUserId = props.match.params.id;
+  const { editUser, users } = useContext(GlobalContext);
+  const [selectedUser, setSelectedUser] = useState({
+    id: '',
+    name: ''
+  })
+  const history = useHistory();
+  const currentUserId = props.match.params.id;
 
-    useEffect(() => {
-      const userId = currentUserId;
-      const selectedUser = users.find(user => user.id === userId)
-      setSelectedUser(setSelectedUser)
-    }, [currentUserId, users])
-  
-    const onSubmit = () => {
-      editUser(selectedUser)
+  useEffect(() => {
+    const userId = currentUserId;
+    const selectedUser = users.find(user => user.id === userId);
+    setSelectedUser(selectedUser);
+  }, [currentUserId, users])
 
-      history.push('/');
-    }
+  const onChange = (e) => {
+    setSelectedUser({ ...selectedUser, [e.target.name]: e.target.value })
+  }
 
-    const onChange = (e) => {
-      setSelectedUser({...selectedUser, [e.target.name]: e.target
-        .value})
-    }
-  
+  const onSubmit = (e) => {
+    e.preventDefault();
+    editUser(selectedUser);
+    history.push("/")
+  }
+
   return (
     <Form onSubmit={onSubmit}>
       <FormGroup>
         <Label>Name</Label>
-        <Input type="text" name="name" value={selectedUser.name} onChange={onChange} 
-        placeholder="Enter Name"></Input>
+        <Input type="text" value={selectedUser.name} onChange={onChange} name="name" placeholder="Enter user" required></Input>
       </FormGroup>
       <Button type="submit">Edit Name</Button>
-      <Link to="/" className="btn btn-danger ml2">
-        Cancel
-      </Link>
+      <Link to="/" className="btn btn-danger ml-2">Cancel</Link>
     </Form>
-  );
-};
+  )
+}
